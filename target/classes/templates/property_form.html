@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Điền Thông Tin</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12 col-md-8 offset-md-2">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3>Điền Thông Tin Mặt Bằng</h3>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">Tỉnh/ Thành Phố</label>
+                                <input type="text" class="form-control" id="city" placeholder="Nhập tỉnh/ thành phố">
+                            </div>
+                            <div class="mb-3">
+                                <label for="district" class="form-label">Quận/ Huyện</label>
+                                <input type="text" class="form-control" id="district" placeholder="Nhập quận/ huyện">
+                            </div>
+                            <div class="mb-3">
+                                <label for="ward" class="form-label">Phường/ Xã</label>
+                                <input type="text" class="form-control" id="ward" placeholder="Nhập phường/ xã">
+                            </div>
+                            <div class="mb-3">
+                                <label for="street" class="form-label">Đường/ Phố</label>
+                                <input type="text" class="form-control" id="street" placeholder="Nhập đường/ phố">
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Địa chỉ hiện trên tin</label>
+                                <textarea class="form-control" id="address" rows="3" placeholder="Nhập địa chỉ chi tiết"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="propertyType" class="form-label">Loại mặt bằng</label>
+                                <select class="form-select" id="propertyType">
+                                    <option selected disabled>Chọn loại mặt bằng</option>
+                                    <option value="Phòng trọ">Phòng trọ</option>
+                                    <option value="Nhà nguyên căn">Nhà nguyên căn</option>
+                                    <option value="Căn hộ chung cư">Căn hộ chung cư</option>
+                                    <option value="Căn hộ mini">Căn hộ mini</option>
+                                    <option value="Căn hộ dịch vụ">Căn hộ dịch vụ</option>
+                                    <option value="Mặt bằng">Mặt bằng</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="area" class="form-label">Diện tích (m²)</label>
+                                <input type="number" class="form-control" id="area" placeholder="Nhập diện tích">
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Mức giá (VND)</label>
+                                <input type="number" class="form-control" id="price" placeholder="Nhập mức giá">
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Gửi thông tin</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-5"></div>
+            <div class="col-2"><button onclick="location.href='index.html'" class="btn btn-secondary">Back to Home</button></div>
+            <div class="col-5"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybC9lD6XShpQ1pDqG5f5GhtXt7s6giM9Wf3tPpBf6e1Tt5eFaX" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
