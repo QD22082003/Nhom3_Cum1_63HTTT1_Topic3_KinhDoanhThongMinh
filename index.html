@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        #chatbox {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .chat-message .message {
+            font-size: 14px;
+            line-height: 1.5;
+            border-radius: 10px;
+            padding: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .chat-message.user .message {
+            background-color: #e0f7fa;
+            /* Màu dành cho người dùng */
+            align-self: flex-end;
+        }
+
+        .chat-message.model .message {
+            background-color: #f1f1f1;
+            /* Màu dành cho chatbot */
+            align-self: flex-start;
+        }
+
+        .chat-message .time {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .chat-message.model .time {
+            text-align: left;
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #007bff;
+            color: white;
+            font-size: 30px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            visibility: visible;
+            opacity: 1;
+            transition: visibility 0s, opacity 0.5s linear;
+        }
+
+        .chat-button.hidden {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .input-group {
+            max-width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .input-group input {
+            width: calc(100% - 50px);
+        }
+
+        .input-group button {
+            width: 60px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid mt-5 bg-light p-5 rounded shadow-lg">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6 bg-white p-5 rounded">
+                <h1 class="text-center mb-4 text-primary">Nhập thông tin mặt bằng</h1>
+                <form id="propertyForm" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="province" class="form-label text-dark">Tỉnh/Thành Phố</label>
+                        <input type="text" class="form-control border-primary" id="province" value="Hà Nội" required>
+                        <div class="invalid-feedback">Vui lòng nhập Tỉnh/Thành Phố.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="district" class="form-label text-dark">Quận/Huyện</label>
+                        <input type="text" class="form-control border-primary" id="district" value="Đống Đa" required>
+                        <div class="invalid-feedback">Vui lòng nhập Quận/Huyện.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="ward" class="form-label text-dark">Phường/Xã</label>
+                        <input type="text" class="form-control border-primary" id="ward" value="Láng Hạ" required>
+                        <div class="invalid-feedback">Vui lòng nhập Phường/Xã.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="street" class="form-label text-dark">Đường/Phố</label>
+                        <input type="text" class="form-control border-primary" id="street" value="Đường Láng" required>
+                        <div class="invalid-feedback">Vui lòng nhập Đường/Phố.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="address" class="form-label text-dark">Địa chỉ hiện trên tin</label>
+                        <input type="text" class="form-control border-primary" id="address" value="Ngõ 5 Hoàng Ngọc Phách Đường Láng" required>
+                        <div class="invalid-feedback">Vui lòng nhập Địa chỉ hiện trên tin.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="describe" class="form-label text-dark">Mô tả</label>
+                        <textarea class="form-control border-primary" id="describe" rows="5" required>Nhà nguyên căn 3 tầng, 4 phòng ngủ, 3 toilet, 1 phòng khách, 1 bếp, 1 phòng thờ, 1 sân phơi, 1 sân chơi. Nhà mới xây, sạch sẽ, thoáng mát, an ninh tốt, gần trường học, chợ, bệnh viện, siêu thị, thuận tiện đi lại.
+                        </textarea>
+                        <div class="invalid-feedback">Vui lòng nhập Mô tả.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="propertyType" class="form-label text-dark">Loại mặt bằng</label>
+                        <select class="form-select border-primary" id="propertyType" required>
+                            <option value="">Chọn loại mặt bằng</option>
+                            <option value="Phòng trọ">Phòng trọ</option>
+                            <option value="Nhà nguyên căn">Nhà nguyên căn</option>
+                            <option value="Căn hộ chung cư">Căn hộ chung cư</option>
+                            <option value="Căn hộ mini">Căn hộ mini</option>
+                            <option value="Căn hộ dịch vụ">Căn hộ dịch vụ</option>
+                            <option value="Mặt bằng">Mặt bằng</option>
+                        </select>
+                        <div class="invalid-feedback">Vui lòng chọn loại mặt bằng.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="area" class="form-label text-dark">Diện tích (m²)</label>
+                        <input type="number" class="form-control border-primary" id="area" value="50" required>
+                        <div class="invalid-feedback">Vui lòng nhập Diện tích.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="price" class="form-label text-dark">Mức giá (VNĐ)</label>
+                        <input type="number" class="form-control border-primary" id="price" value="5000000" required>
+                        <div class="invalid-feedback">Vui lòng nhập Mức giá.</div>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="priceAnalysis" class="form-label text-dark">Mức giá dự đoán và phân tích</label>
+                        <textarea class="form-control border-secondary bg-light" id="priceAnalysis" rows="20" disabled></textarea>
+                    </div>
+    
+                    <button type="submit" class="btn btn-primary w-100">Gửi</button>
+                </form>
+            </div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+
+    <div id="chatbot">
+        <div class="chat-header">
+            <span>Chatbot</span>
+            <span class="close-btn fs-3" onclick="toggleChatbot()">×</span>
+        </div>
+        <div id="chatbox"></div>
+        <div class="input-group p-3">
+            <input type="text" id="userMessage" class="form-control" placeholder="Nhập tin nhắn..."
+                onkeypress="handleKeyPress(event)">
+            <button class="btn btn-primary" onclick="sendMessage()">Gửi</button>
+        </div>
+    </div>
+
+    <div id="chatButton" class="chat-button" onclick="toggleChatbot()">💬</div>
+
+    <script>
+        var history = [];
+
+        function convertMarkdownToHtml(text) {
+            text = text.replace(/\*\*(.*?)\*\*/g, '<br><strong>$1</strong>');
+            text = text.replace(/\*/g, '<br>');
+            text = text.replace(/\[([^\[]+)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            return text;
+        }
+
+        function appendMessage(role, message) {
+            const chatbox = document.getElementById('chatbox');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', role);
+
+            // Tạo phần tin nhắn
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message');
+            messageContent.innerHTML = `<strong>${role === 'user' ? 'Bạn' : 'Chatbot'}:</strong> ${convertMarkdownToHtml(message)}`;
+
+            // Tạo thời gian
+            const time = new Date();
+            const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const timeDiv = document.createElement('div');
+            timeDiv.classList.add('time');
+            timeDiv.innerHTML = timeString;
+
+            // Thêm tin nhắn và thời gian vào messageDiv
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(timeDiv);
+
+            // Căn chỉnh thời gian cho chatbot
+            if (role === 'model') {
+                timeDiv.style.textAlign = 'left';  // Căn trái cho chatbot
+            } else {
+                timeDiv.style.textAlign = 'right';  // Căn phải cho người dùng
+            }
+
+            // Thêm messageDiv vào chatbox và cuộn đến cuối
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function sendMessage() {
+            const userMessage = document.getElementById('userMessage').value;
+            if (!userMessage.trim()) return;
+
+            appendMessage('user', userMessage);
+            document.getElementById('userMessage').value = '';
+
+            $.ajax({
+                url: 'http://127.0.0.1:5000/chat',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: userMessage }),
+                success: function (response) {
+                    appendMessage('model', response.response);
+                    history = response.history;
+                },
+                error: function () {
+                    alert('Lỗi khi gửi tin nhắn.');
+                }
+            });
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function toggleChatbot() {
+            const chatbot = document.getElementById('chatbot');
+            const chatButton = document.getElementById('chatButton');
+
+            if (chatbot.style.display === 'none' || chatbot.style.display === '') {
+                chatbot.style.display = 'block';
+                chatButton.classList.add('hidden');
+            } else {
+                chatbot.style.display = 'none';
+                chatButton.classList.remove('hidden');
+            }
+        }
+    </script>
+    <script>
+        (function () {
+            'use strict'
+
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("propertyForm");
+    
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault(); // Ngăn form tự reload trang
+    
+                // Lấy dữ liệu từ các trường input
+                const data = {
+                    province: document.getElementById("province").value,
+                    district: document.getElementById("district").value,
+                    ward: document.getElementById("ward").value,
+                    street: document.getElementById("street").value,
+                    address: document.getElementById("address").value,
+                    describe: document.getElementById("describe").value,
+                    propertyType: document.getElementById("propertyType").value,
+                    area: document.getElementById("area").value,
+                    price: document.getElementById("price").value,
+                };
+                try {
+                    const messageContent = `Hãy phân tích data cũ và mới rồi trả về cho tôi kết quả phân tích data mới về khoảng mức giá dự đoán và 
+                    phân tích kỹ tại sao lại ở mức giá đó (Chỉ trả về kết quả phân tích mà bạn đã phân tích chứ không phải json nhé và ko nói gì thêm,
+                    phân tích kĩ ở đây là phân tích từ thị trường, data cũ và đưa ra lý do tại sao lại ở khoảng giá đó) Hãy nói ngữ cảnh cho người dùng cuối nhé. 
+                    Bỏ mấy câu thừa đi (ví dụ: kết quả phân tích cho người dùng cuối hay gì đó) chỉ đưa ra kết quả thôi. Phân tích nói dài tí để trông như chuyên gia.
+                    Đây là data mới:\n${JSON.stringify(data, null, 2)}`;
+
+                    const response = await fetch("http://127.0.0.1:5000/chat", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({message: messageContent}),
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch data from API");
+                    }
+    
+                    const result = await response.json();
+    
+                    document.getElementById("priceAnalysis").value = result.response || "Không có dữ liệu phân tích.";
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Đã xảy ra lỗi khi gửi dữ liệu đến API. Vui lòng thử lại.");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
